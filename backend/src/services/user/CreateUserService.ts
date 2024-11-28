@@ -44,6 +44,7 @@ class CreateUserService {
         email: email,
         password: passwordHash,
       },
+      
       //utilizando select para escolher o que eu quero que retorne
       select: {
         id: true,
