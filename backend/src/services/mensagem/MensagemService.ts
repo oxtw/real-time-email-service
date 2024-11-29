@@ -1,5 +1,5 @@
 import prismaClient from "../../prisma";
-import { connectedUsers } from "../../websocket/websocket";
+import { connectedUsers, sendNotification } from "../../websocket/websocket";
 
 interface MensagemRequest {
   remetenteId: string;
@@ -66,12 +66,26 @@ class MensagemService {
     return mensagens;
   }
 
-  async marcarComoLida(mensagemId: string) {
+  async marcarComoLida(mensagemId: string, userId: string) {
     const mensagens = await prismaClient.mensagem.update({
       where: { id: mensagemId },
       data: { estaLida: true },
     });
+
+    await this.contarMensagensNaoLidas(userId)
+    
     return mensagens;
+  }
+
+  async contarMensagensNaoLidas(userId: string) {
+    const mensagensNaoLidas = await prismaClient.mensagem.count({
+      where: {
+        idDestinatario: userId,
+        estaLida: false,
+      },
+    });
+    
+    return mensagensNaoLidas;
   }
 }
 

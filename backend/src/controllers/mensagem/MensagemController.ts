@@ -20,8 +20,8 @@ class MensagemController {
       corpo,
     });
 
-     // Envia uma notificação em tempo real para o destinatário via WebSocket
-     sendNotification(
+    // Envia uma notificação em tempo real para o destinatário via WebSocket
+    sendNotification(
       destinatarioId,
       `Nova mensagem de ${remetenteId}: ${titulo}`
     );
@@ -60,16 +60,43 @@ class MensagemController {
 
   // Método para marcar uma mensagem como lida
   async marcarLida(req: Request, res: Response) {
-    const { mensagemId } = req.params; // Obtendo o ID da mensagem nos parâmetros da URL
+    const { mensagemId } = req.params; // ID da mensagem
 
-    // Instanciando o serviço responsável por mensagens
     const mensagemService = new MensagemService();
 
-    // Atualizando o status da mensagem para "lida" no banco de dados
-    const mensagem = await mensagemService.marcarComoLida(mensagemId);
+    // ID do usuário autenticado (destinatário)
+    const userId = req.user_id;
 
-    // Retornando a mensagem atualizada
+    // Atualiza o status da mensagem para "lida"
+    const mensagem = await mensagemService.marcarComoLida(mensagemId, userId);
+
+    // Após marcar como lida, contar as mensagens não lidas
+    const mensagensNaoLidas = await mensagemService.contarMensagensNaoLidas(
+      mensagem.idDestinatario
+    );
+
+    // Envia a notificação de contagem de mensagens não lidas via WebSocket
+    sendNotification(
+      mensagem.idDestinatario,
+      `Você tem ${mensagensNaoLidas} mensagens não lidas.`
+    );
+
     return res.json(mensagem);
+  }
+
+  async contarNaoLidas(req: Request, res: Response) {
+    const userId = req.user_id; // Ou o ID do usuário autenticado
+    const mensagemService = new MensagemService();
+    const mensagensNaoLidas = await mensagemService.contarMensagensNaoLidas(
+      userId
+    );
+
+    sendNotification(
+      userId,
+      `Você tem ${mensagensNaoLidas} mensagens não lidas.`
+    );
+    
+    return res.json({ mensagensNaoLidas });
   }
 }
 

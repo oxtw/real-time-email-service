@@ -1,13 +1,33 @@
 import WebSocket, { WebSocketServer } from "ws";
+import prismaClient from "../prisma";
 
 // Mapeamento de usuários conectados
 export const connectedUsers = new Map<string, WebSocket>();
 
 // Função para enviar notificações a um cliente específico
-export const sendNotification = (user_id: string, message: string) => {
+export const sendNotification = async (user_id: string, message: string) => {
+  // Consulta ao banco de dados para obter o nome de usuário
+  const user = await prismaClient.user.findUnique({
+    where: { id: user_id },
+    select: { username: true }, // Selecionando apenas o campo 'username'
+  });
+
+  if (!user) {
+    console.log(`Usuário com ID ${user_id} não encontrado.`);
+    return;
+  }
+
   const socket = connectedUsers.get(user_id);
+
   if (socket && socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ notification: message }));
+    // Substituindo o ID pelo nome de usuário na mensagem
+    const notificationMessage = message.replace(new RegExp(user_id, 'g'), user.username);
+
+    socket.send(JSON.stringify({ notification: notificationMessage }));
+  } else {
+    console.log(
+      `O socket para o usuário ${user_id} não está disponível ou não está aberto.`
+    );
   }
 };
 

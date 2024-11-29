@@ -26,7 +26,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 
 // Cria o servidor HTTP
 const serverExpress = createServer(app); 
-serverExpress.listen(3000, () => console.log("Http Server Running 🚀"));
+serverExpress.listen(3001, () => console.log("Http Server Running 🚀"));
 
 // Inicializa o WebSocket em uma porta separada (8080)
 initWebSocket(8080);

@@ -27,4 +27,6 @@ router.get("/mensagens/outbox", isAuthenticated, new MensagemController().outbox
 
 router.patch("/mensagens/:mensagemId", isAuthenticated, new MensagemController().marcarLida);
 
+router.get("/mensagens/nao-lidas", isAuthenticated, new MensagemController().contarNaoLidas);
+
 export { router };
