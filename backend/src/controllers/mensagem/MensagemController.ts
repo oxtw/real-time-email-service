@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { MensagemService } from "../../services/mensagem/MensagemService";
+import { sendNotification } from "../../websocket/websocket";
 
 class MensagemController {
   // Método para enviar uma nova mensagem
@@ -18,6 +19,12 @@ class MensagemController {
       titulo,
       corpo,
     });
+
+     // Envia uma notificação em tempo real para o destinatário via WebSocket
+     sendNotification(
+      destinatarioId,
+      `Nova mensagem de ${remetenteId}: ${titulo}`
+    );
 
     // Retornando a mensagem criada com status HTTP 201
     return res.status(201).json(mensagem);

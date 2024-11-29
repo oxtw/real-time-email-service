@@ -1,4 +1,5 @@
 import prismaClient from "../../prisma";
+import { connectedUsers } from "../../websocket/websocket";
 
 interface MensagemRequest {
   remetenteId: string;
@@ -22,6 +23,25 @@ class MensagemService {
         corpo,
       },
     });
+
+    // Envia a mensagem em tempo real ao destinatário, se estiver conectado
+    const socket = connectedUsers.get(destinatarioId);
+    if (socket && socket.readyState === 1) {
+      // 1 é o valor de WebSocket.OPEN
+      console.log("Enviando mensagem em tempo real para:", destinatarioId);
+      socket.send(
+        JSON.stringify({
+          type: "message", // Definindo o tipo como "message"
+          remetenteId,
+          titulo,
+          corpo,
+        })
+      );
+    } else {
+      console.log(
+        `Usuário ${destinatarioId} não está conectado ou o socket não está aberto.`
+      );
+    }
 
     return mensagem;
   }

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      const socket = new WebSocket("ws://localhost:3000");
+
+      socket.onopen = () => {
+        console.log("Conectado ao WebSocket");
+        socket.send(
+          JSON.stringify({
+            event: "register",
+            data: "Amanda",
+          })
+        );
+      };
+
+      socket.onmessage = (event) => {
+        console.log("Mensagem recebida:", event.data);
+      };
+
+      socket.onerror = (error) => {
+        console.error("Erro WebSocket:", error);
+      };
+
+      socket.onclose = () => {
+        console.log("Conexão WebSocket fechada");
+      };
+    </script>
+  </body>
+</html>
