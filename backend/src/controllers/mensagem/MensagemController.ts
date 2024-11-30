@@ -61,6 +61,9 @@ class MensagemController {
   // Método para marcar uma mensagem como lida
   async marcarLida(req: Request, res: Response) {
     const { mensagemId } = req.params; // ID da mensagem
+    const { estaLida } = req.body; // ID da mensagem
+
+    console.log( 'Teste',req.body)
 
     const mensagemService = new MensagemService();
 
@@ -68,7 +71,7 @@ class MensagemController {
     const userId = req.user_id;
 
     // Atualiza o status da mensagem para "lida"
-    const mensagem = await mensagemService.marcarComoLida(mensagemId, userId);
+    const mensagem = await mensagemService.marcarComoLida(mensagemId, userId, estaLida);
 
     // Após marcar como lida, contar as mensagens não lidas
     const mensagensNaoLidas = await mensagemService.contarMensagensNaoLidas(

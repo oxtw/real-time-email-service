@@ -55,6 +55,16 @@ class CreateUserService {
 
     return user;
   }
+
+  async listAllUsers(){
+    
+    return prismaClient.user.findMany({
+      select:{
+        id: true,
+        username: true,
+    }
+    })
+  }
 }
 
 export { CreateUserService };

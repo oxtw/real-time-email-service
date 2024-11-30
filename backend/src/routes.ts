@@ -29,4 +29,6 @@ router.patch("/mensagens/:mensagemId", isAuthenticated, new MensagemController()
 
 router.get("/mensagens/nao-lidas", isAuthenticated, new MensagemController().contarNaoLidas);
 
+router.get("/users", isAuthenticated, new CreateUserController().ListUsers);
+
 export { router };

@@ -20,6 +20,16 @@ class CreateUserController {
     // Retornando o usuário criado com status HTTP 201
     return res.status(201).json(user);
   }
+
+  async ListUsers(req: Request, res: Response){
+    // const { id, username } = req.params;
+
+    const createUserService = new CreateUserService();
+
+    const listUsers = await createUserService.listAllUsers();
+
+    return res.status(200).json(listUsers);
+  }
 }
 
 export { CreateUserController };

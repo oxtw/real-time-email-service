@@ -51,6 +51,9 @@ class MensagemService {
       where: {
         idDestinatario: destinatarioId,
       },
+      include: {
+        remetente: true,
+      },
       orderBy: {
         dataEnvio: "desc",
       },
@@ -66,14 +69,18 @@ class MensagemService {
     return mensagens;
   }
 
-  async marcarComoLida(mensagemId: string, userId: string) {
+  async marcarComoLida(mensagemId: string, userId: string, estaLida?: boolean) {
+      console.log(estaLida)
+    
     const mensagens = await prismaClient.mensagem.update({
       where: { id: mensagemId },
-      data: { estaLida: true },
+      data: { estaLida: estaLida},
     });
 
-    await this.contarMensagensNaoLidas(userId)
-    
+    console.log(mensagens)
+
+    await this.contarMensagensNaoLidas(userId);
+
     return mensagens;
   }
 
@@ -84,7 +91,7 @@ class MensagemService {
         estaLida: false,
       },
     });
-    
+
     return mensagensNaoLidas;
   }
 }
